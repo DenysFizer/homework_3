@@ -3,11 +3,8 @@ package main
 import "fmt"
 
 type animal interface {
-	nameGetter
 	eatGetter
-}
-type nameGetter interface {
-	getName() string
+	fmt.Stringer //fixer add stringer interface
 }
 type eatGetter interface {
 	getFeed() float64
@@ -21,7 +18,7 @@ func (c cat) getFeed() float64 {
 	return float64(c.weight * 7)
 }
 
-func (c cat) getName() string {
+func (c cat) String() string {
 	return "cat"
 }
 
@@ -34,7 +31,7 @@ func (d dog) getFeed() float64 {
 	return float64(absolute * 10)
 }
 
-func (d dog) getName() string {
+func (d dog) String() string {
 	return "dog"
 }
 
@@ -42,18 +39,15 @@ type cow struct {
 	weight int
 }
 
-func (cow cow) getFeed() float64 {
-	return float64(cow.weight * 25)
+func (c cow) getFeed() float64 {
+	return float64(c.weight * 25)
 }
-func (cow cow) getName() string {
+func (c cow) String() string { //fixed reciever
 	return "cow"
 }
 
-var WeightallFeed float64
-
 func eatAll(feed eatGetter) float64 {
 	korm := feed.getFeed()
-	WeightallFeed += korm
 	return korm
 }
 func main() {
@@ -66,9 +60,11 @@ func main() {
 		cat{weight: 55},
 		dog{weight: 75},
 	}
+	var foodForAll float64 //fixed hided counter to the function
 	for _, t := range animals {
 		eat := eatAll(t)
-		fmt.Printf(" %s eat :%.f kg \n", t.getName(), eat)
+		foodForAll += eat
+		fmt.Printf(" %s eat :%.f kg \n", t.String(), eat)
 	}
-	fmt.Printf(" Weight for all Farm: %.f kg\n", WeightallFeed)
+	fmt.Printf(" Weight for all Farm: %.f kg\n", foodForAll)
 }
